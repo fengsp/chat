@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>A simple web chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="../static/favicon.ico">
+    <link href="../static/css/base.css" rel="stylesheet" media="screen">
+</head>
+
+<body>
+    <div id="Chat">
+        <div class="item message out blue-theme">
+        	<img alt="avatar" src="http://bobjr.ru/lighty_for_adium/Outgoing/buddy_icon.png" class="avatar out" />
+        	<span class="name">Anton</span>
+        	<span class="body blue">So a priest, a rabbi, and a chicken walk into a bar.</span>
+            <span class="time">14:55</span>
+        </div>
+        <div class="item message in cyan-theme">
+        	<img alt="avatar" src="http://bobjr.ru/lighty_for_adium/Incoming/buddy_icon.png" class="avatar in" />
+        	<span class="name">Anton</span>
+        	<span class="body cyan">I'm pretty sure I've heard this one before</span>
+            <span class="time">14:55</span>
+        </div>
+        <div class="item message in green-theme">
+        	<img alt="avatar" src="http://bobjr.ru/lighty_for_adium/Incoming/buddy_icon.png" class="avatar in" />
+        	<span class="name">Anton</span>
+        	<span class="body green">I'm pretty sure I've heard this one before</span>
+            <span class="time">14:55</span>
+        </div>
+    </div>
+    
+    <div>
+    <span id="status">Connecting...</span>
+    <input type="text" id="input" disabled="disabled" />
+    </div>
+    <script src="../static/js/jquery.min.js"></script>
+    <script src="../static/js/jquery.scrollUp.min.js"></script>
+    <script src="../static/js/base.js"></script>
+    <script src="../static/js/socket.io.js"></script>
+    <script src="../static/js/chat.js"></script>
+</body>
+</html>
