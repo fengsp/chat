@@ -8,7 +8,8 @@
     <link href="../static/css/base.css" rel="stylesheet" media="screen">
 </head>
 
-<body>
+<body class="clearfix">
+<div class="left">
     <div id="Chat">
         <div class="item message out blue-theme">
         	<img alt="avatar" src="http://bobjr.ru/lighty_for_adium/Outgoing/buddy_icon.png" class="avatar out" />
@@ -30,10 +31,16 @@
         </div>
     </div>
     
-    <div>
-    <span id="status">Connecting...</span>
-    <input type="text" id="input" disabled="disabled" />
+    <input type="text" id="input" value="未连接" disabled='disabled'>
+</div>
+<!--
+<div class="right">    
+    <div id="controls">
+        <div id="status" class="disconnect"></div>
     </div>
+</div>
+-->
+    
     <script src="../static/js/jquery.min.js"></script>
     <script src="../static/js/jquery.scrollUp.min.js"></script>
     <script src="../static/js/base.js"></script>

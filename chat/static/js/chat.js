@@ -1,9 +1,8 @@
 $(function() {
     "use strict";
 
-    var content = $('#content');
+    var content = $('#Chat');
     var input = $('#input');
-    var status = $('#status');
 
     var myColor = false;
     var myName = false;
@@ -11,35 +10,29 @@ $(function() {
     var socket = io.connect('/chat');
     
     socket.on('connect', function () {
-        input.removeAttr('disabled');
-        status.text('Choose name:');
+        sysMessage('上线成功，输入名字按回车发送...');
+        input.removeAttr('disabled').val('请输入名字...回车发送');
     });
 
     socket.on('disconnect', function () {
-        status.text('Error');
-        input.attr('disabled', 'disabled').val('Unable to communicate');
+        sysMessage('你已经离线，请检查网络...');
+        input.attr('disabled', 'disabled').val('未连接');
     });
     
-
     socket.on('message', function (message) {
-        try {
-            var json = JSON.parse(message);
-        } catch (e) {
-            console.log('This doesn\'t look like a valid JSON: ', message);
-            return;
-        }
+        var json = message;
 
         if (json.type === 'color') {
             myColor = json.data;
-            status.text(myName + ': ').css('color', myColor);
+            sysMessage('你可以开始聊天啦...');
             input.removeAttr('disabled').focus();
         } else if (json.type === 'history') {
             for (var i=0; i < json.data.length; i++) {
-                addMessage(json.data[i].author, json.data[i].text, json.data[i].color, json.data[i].time);
+                addMessage(json.data[i].type, json.data[i].author, json.data[i].text, json.data[i].color, json.data[i].time);
             }
         } else if (json.type === 'message') {
             input.removeAttr('disabled');
-            addMessage(json.data.author, json.data.text, json.data.color, json.data.time);
+            addMessage(json.data.type, json.data.author, json.data.text, json.data.color, json.data.time);
         } else {
             console.log('Hmm..., I\'ve never seen JSON like this: ', json);
         }
@@ -61,9 +54,28 @@ $(function() {
             }
         }
     });
+    
+    input.click(function(e) {
+        $(this).val('');
+    });
 
-    function addMessage(author, message, color, dt) {
-        content.prepend('<p><span style="color:' + color + '">' + author + '</span> @ ' +
-             + dt + ': ' + message + '</p>');
+    function addMessage(type, author, message, color, dt) {
+        if (color == 'red') {
+            var buddy = 'sys';
+        } else {
+            var buddy = type;
+        }
+        content.append('<div class="item message ' + type + ' ' + color + '-theme">'
+            + '<img alt="avatar" src="../static/img/buddy_' + buddy + '.png" class="avatar ' + type + '" />'
+             + '<span class="name">' + author + '</span>'
+             + '<span class="body ' + color + '">' + message + '</span>'
+              +  '<span class="time">' +dt + '</span>'
+            + '</div>');
+    }
+    
+    function sysMessage(message) {
+        var currentTime = new Date();
+        var time = currentTime.getHours() + ':' + (currentTime.getMinutes() < 10 ? '0' + currentTime.getMinutes() : currentTime.getMinutes());
+        addMessage('out', '系统消息', message, 'red', time)
     }
 });

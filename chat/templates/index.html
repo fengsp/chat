@@ -8,17 +8,24 @@
     <link href="{{ url_for('.static', filename='css/base.css') }}" rel="stylesheet" media="screen">
 </head>
 
-<body>
-    <div id="content">
+<body class="clearfix">
+<div class="left">
+    <div id="Chat">
     </div>
-    <div>
-    <span id="status">Connecting...</span>
-    <input type="text" id="input" disabled="disabled" />
+    
+    <input type="text" id="input" value="未连接" disabled='disabled'>
+</div>
+<!--
+<div class="right">    
+    <div id="controls">
+        <div id="status" class="disconnect"></div>
     </div>
-    <script src="{{ url_for('.static', filename='js/jquery.min.js') }}"></script>
-    <script src="{{ url_for('.static', filename='js/jquery.scrollUp.min.js') }}"></script>
-    <script src="{{ url_for('.static', filename='js/base.js') }}"></script>
-    <script src="{{ url_for('.static', filename='js/socket.io.js') }}"></script>
-    <script src="{{ url_for('.static', filename='js/chat.js') }}"></script>
+</div>
+-->
+<script src="{{ url_for('.static', filename='js/jquery.min.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/jquery.scrollUp.min.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/base.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/socket.io.js') }}"></script>
+<script src="{{ url_for('.static', filename='js/chat.js') }}"></script>
 </body>
 </html>

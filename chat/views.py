@@ -1,4 +1,5 @@
-import json
+# -*- encoding: utf-8 -*-
+import json, random, time
 
 from flask import Flask
 from flask import render_template, request, Response
@@ -18,39 +19,58 @@ app.debug = True
 class ChatNamespace(BaseNamespace):
     sockets = {}
     history = []
+    colors = ('gray', 'purple', 'blue', 'cyan', 'green', 'yellow', 'pink', 'greenyellow', 'salmon')
     
     def recv_connect(self):
         self.username = None
         self.usercolor = None
         self.sockets[id(self)] = self
         if self.history:
-            self.send(json.dumps({ 'type': 'history', 'data': self.history }))
+            self.send({ 'type': 'history', 'data': self.history }, json=True)
     
     def disconnect(self, *args, **kwargs):
         if id(self) in self.sockets:
             del self.sockets[id(self)]
         super(ChatNamespace, self).disconnect(*args, **kwargs)
     
+    def broadcast(self, message):
+        for ws in self.sockets.values():
+            if ws is self:
+                message['data']['type'] = 'in'
+            else:
+                message['data']['type'] = 'out'
+            ws.send(message, json=True)
+
     @classmethod
-    def broadcast(cls, message):
+    def spam(cls):
+        obj = {
+            'time': time.strftime('%H:%M'),
+            'text': '<script type="text/javascript">alert("注意！");</script>',
+            'author': '垃圾信息',
+            'color': 'red',
+            'type': 'out'
+        }
+        message = { 'type': 'message', 'data': obj }
         for ws in cls.sockets.values():
-            ws.send(message)
+            ws.send(message, json=True)
     
     def recv_message(self, data):
+        data = escape(data)
         if self.username is None:
             self.username = data
-            self.usercolor = 'red'
-            self.send(json.dumps( { 'type': 'color', 'data': 'red' } ))
+            self.usercolor = random.choice(self.colors)
+            self.send({ 'type': 'color', 'data': self.usercolor }, json=True)
         else:
             obj = {
-                'time': 'timetest',
+                'time': time.strftime('%H:%M'),
                 'text': data,
                 'author': self.username,
-                'color': self.usercolor
+                'color': self.usercolor,
+                'type': 'out'
             }
-            self.history.append(obj)
-            jsonData = json.dumps( { 'type': 'message', 'data': obj } )
-            ChatNamespace.broadcast(jsonData)
+            self.history.append(obj.copy())
+            message = { 'type': 'message', 'data': obj }
+            self.broadcast(message)
             
     
     
@@ -66,4 +86,8 @@ def chat(rest):
     except:
         app.logger.error("Exception while handling socketio connection", exc_info=True)
     return Response()
-    
+
+@app.route('/spam')
+def spam():
+    ChatNamespace.spam()
+    return Response("Message sent!")
